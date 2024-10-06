@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Solar System Animation</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        .scene {
+            width: 1000px;
+            height: 1000px;
+            perspective: 1000px;
+        }
+        .solar-system {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: rotate 100s infinite linear;
+        }
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #fff700, #ff9900);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 60px #ff9900, 0 0 100px #ff5500;
+        }
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(90deg);
+        }
+        .planet-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .planet {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .label {
+            position: absolute;
+            color: white;
+            font-size: 10px;
+            text-align: center;
+            transform: translate(-50%, 20px) rotateX(-90deg);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        #mercury {
+            width: 5px;
+            height: 5px;
+            background-color: #8c7e6d;
+        }
+        #venus {
+            width: 8px;
+            height: 8px;
+            background-color: #e3b46c;
+        }
+        #earth {
+            width: 9px;
+            height: 9px;
+            background-color: #6b93d6;
+        }
+        #mars {
+            width: 6px;
+            height: 6px;
+            background-color: #c1440e;
+        }
+        #jupiter {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #e0ae6f, #9c8963);
+        }
+        #saturn {
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #f4d4a9, #e6bb85);
+        }
+        #uranus {
+            width: 15px;
+            height: 15px;
+            background-color: #c9dfec;
+        }
+        #neptune {
+            width: 14px;
+            height: 14px;
+            background-color: #3e66f9;
+        }
+        @keyframes rotate {
+            0% { transform: rotateX(-15deg) rotateY(0); }
+            100% { transform: rotateX(-15deg) rotateY(360deg); }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            color: #000;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="solar-system">
+            <div class="sun"></div>
+            <div class="label" style="top: 50%; left: 50%; transform: translate(-50%, 35px) rotateX(-90deg);">Sun</div>
+            
+            <div class="orbit" style="width: 100px; height: 100px;"></div>
+            <div class="planet-container" id="mercury-container">
+                <div class="planet" id="mercury"></div>
+            </div>
+            <div class="label" id="mercury-label">Mercury</div>
+            
+            <div class="orbit" style="width: 160px; height: 160px;"></div>
+            <div class="planet-container" id="venus-container">
+                <div class="planet" id="venus"></div>
+            </div>
+            <div class="label" id="venus-label">Venus</div>
+            
+            <div class="orbit" style="width: 220px; height: 220px;"></div>
+            <div class="planet-container" id="earth-container">
+                <div class="planet" id="earth"></div>
+            </div>
+            <div class="label" id="earth-label">Earth</div>
+            
+            <div class="orbit" style="width: 300px; height: 300px;"></div>
+            <div class="planet-container" id="mars-container">
+                <div class="planet" id="mars"></div>
+            </div>
+            <div class="label" id="mars-label">Mars</div>
+            
+            <div class="orbit" style="width: 550px; height: 550px;"></div>
+            <div class="planet-container" id="jupiter-container">
+                <div class="planet" id="jupiter"></div>
+            </div>
+            <div class="label" id="jupiter-label">Jupiter</div>
+            
+            <div class="orbit" style="width: 700px; height: 700px;"></div>
+            <div class="planet-container" id="saturn-container">
+                <div class="planet" id="saturn"></div>
+            </div>
+            <div class="label" id="saturn-label">Saturn</div>
+            
+            <div class="orbit" style="width: 850px; height: 850px;"></div>
+            <div class="planet-container" id="uranus-container">
+                <div class="planet" id="uranus"></div>
+            </div>
+            <div class="label" id="uranus-label">Uranus</div>
+            
+            <div class="orbit" style="width: 950px; height: 950px;"></div>
+            <div class="planet-container" id="neptune-container">
+                <div class="planet" id="neptune"></div>
+            </div>
+            <div class="label" id="neptune-label">Neptune</div>
+        </div>
+    </div>
+
+    <div id="planetModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="planetName"></h2>
+            <p id="planetDescription"></p>
+        </div>
+    </div>
+
+    <script>
+        const planetInfo = {
+            mercury: {
+                name: "Mercury",
+                description: "Mercury is the smallest planet in our solar system and the closest to the Sun. It has a rocky surface covered in craters, extreme temperature variations, and no atmosphere to speak of."
+            },
+            venus: {
+                name: "Venus",
+                description: "Venus is often called Earth's twin due to its similar size and mass. However, it has a thick atmosphere of carbon dioxide, creating a runaway greenhouse effect with surface temperatures hot enough to melt lead."
+            },
+            earth: {
+                name: "Earth",
+                description: "Earth is the third planet from the Sun and the only known planet to harbor life. It has a diverse ecosystem, liquid water on its surface, and a protective atmosphere that supports a wide range of life forms."
+            },
+            mars: {
+                name: "Mars",
+                description: "Mars, often called the Red Planet, has a thin atmosphere and a surface marked by impact craters, volcanoes, valleys, and deserts. There's evidence that Mars once had liquid water on its surface and might have harbored microbial life."
+            },
+            jupiter: {
+                name: "Jupiter",
+                description: "Jupiter is the largest planet in our solar system. It's a gas giant with a turbulent atmosphere featuring the Great Red Spot, a giant storm that has raged for hundreds of years. Jupiter has numerous moons, including several that might harbor subsurface oceans."
+            },
+            saturn: {
+                name: "Saturn",
+                description: "Saturn is known for its spectacular ring system, composed mostly of ice particles with a smaller amount of rocky debris. It's another gas giant with a complex system of moons, including Titan, which has a thick atmosphere and liquid methane lakes on its surface."
+            },
+            uranus: {
+                name: "Uranus",
+                description: "Uranus is an ice giant, composed mainly of icy materials such as water, ammonia, and methane. It's unique among the planets as it rotates on its side, likely due to a collision early in its history. Uranus has a faint ring system and numerous moons."
+            },
+            neptune: {
+                name: "Neptune",
+                description: "Neptune, the last of the gas giants, is known for its vivid blue color caused by methane in its atmosphere. It has strong winds and storms, including the Great Dark Spot. Neptune has 14 known moons, the largest being Triton, which orbits in the opposite direction of the planet's rotation."
+            }
+        };
+
+        function animatePlanets() {
+            const planets = [
+                { container: document.getElementById('mercury-container'), label: document.getElementById('mercury-label'), speed: 0.008, distance: 50 },
+                { container: document.getElementById('venus-container'), label: document.getElementById('venus-label'), speed: 0.006, distance: 80 },
+                { container: document.getElementById('earth-container'), label: document.getElementById('earth-label'), speed: 0.005, distance: 110 },
+                { container: document.getElementById('mars-container'), label: document.getElementById('mars-label'), speed: 0.004, distance: 150 },
+                { container: document.getElementById('jupiter-container'), label: document.getElementById('jupiter-label'), speed: 0.002, distance: 275 },
+                { container: document.getElementById('saturn-container'), label: document.getElementById('saturn-label'), speed: 0.0015, distance: 350 },
+                { container: document.getElementById('uranus-container'), label: document.getElementById('uranus-label'), speed: 0.001, distance: 425 },
+                { container: document.getElementById('neptune-container'), label: document.getElementById('neptune-label'), speed: 0.0008, distance: 475 }
+            ];
+
+            let angles = new Array(planets.length).fill(0);
+
+            function animate() {
+                planets.forEach((planet, index) => {
+                    angles[index] += planet.speed;
+                    const x = Math.cos(angles[index]) * planet.distance;
+                    const z = Math.sin(angles[index]) * planet.distance;
+                    planet.container.style.transform = `translate3d(${x}px, 0, ${z}px)`;
+                    planet.label.style.transform = `translate3d(${x}px, 20px, ${z}px) rotateX(-90deg)`;
+                });
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        animatePlanets();
+
+        // Modal functionality
+        const modal = document.getElementById("planetModal");
+        const planetName = document.getElementById("planetName");
+        const planetDescription = document.getElementById("planetDescription");
+        const closeBtn = document.getElementsByClassName("close")[0];
+
+        function openModal(planet) {
+            planetName.textContent = planetInfo[planet].name;
+            planetDescription.textContent = planetInfo[planet].description;
+            modal.style.display = "block";
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Add click event listeners to planets
+        document.querySelectorAll('.planet-container').forEach(container => {
+            container.addEventListener('click', function() {
+                const planetId = this.id.split('-')[0];
+                openModal(planetId);
+            });
+        });
+    </script>
+</body>
+</html>
